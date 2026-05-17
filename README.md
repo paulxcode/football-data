@@ -12,37 +12,43 @@ Exploratory data analysis of 25,979 matches across 11 European leagues, with int
 
 Most matches are low-scoring (0-3 total goals). The most common scoreline is 1-1.
 
--here screenshot of goal distribution histogram showing home team, away team, and total goals overlayed-
+![Goal Distribution](assets/screenshot-goal-distribution.png)
 
 ### Home Advantage
 
 Home teams win 45.87% of matches, a consistent pattern across every league.
 
--here screenshot of pie chart and bar chart showing home win / draw / away win distribution-
+![Home Advantage 1](assets/screenshot-home-advantage-1.png)
+![Home Advantage 2](assets/screenshot-home-advantage-2.png)
 
 ### Season Trends
 
 Goal scoring and home advantage stayed remarkably stable from 2008 to 2016.
 
--here screenshot of two line charts showing avg goals per season and home win percentage-
+![Season Trends 1](assets/screenshot-season-trends-1.png)
+![Season Trends 2](assets/screenshot-season-trends-2.png)
 
 ### League Comparison
 
 The Netherlands Eredivisie leads with 3.08 goals per match. France Ligue 1 is the most defensive.
 
--here screenshot of horizontal bar chart of leagues by avg goals and scatter plot-
+![League Comparison 1](assets/screenshot-league-comparison-1.png)
+![League Comparison 2](assets/screenshot-league-comparison-2.png)
 
 ### Player Analysis
 
 Top 20 players by goals and assists, parsed from XML event data across 14K matches. Messi (384 G+A) edges Ronaldo (355 G+A).
 
--here screenshot of top 20 table and Messi vs Ronaldo season comparison line chart-
+![Player Analysis 1](assets/screenshot-player-analysis-1.png)
+![Player Analysis 2](assets/screenshot-player-analysis-2.png)
 
 ### Match Prediction Model
 
 A Random Forest classifier using B365 betting odds achieves 55.2% accuracy. Home Win is easiest to predict (F1=0.68), Draw is hardest (F1=0.09).
 
--here screenshot of confusion matrix heatmap and feature importance bar chart-
+![Match Prediction 1](assets/screenshot-prediction-1.png)
+![Match Prediction 2](assets/screenshot-prediction-2.png)
+![Match Prediction 3](assets/screenshot-prediction-3.png)
 
 ---
 

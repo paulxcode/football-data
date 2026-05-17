@@ -190,20 +190,29 @@ fig_league_bar.update_layout(
 apply_layout(fig_league_bar)
 charts["league_comparison_bar"] = fig_league_bar.to_dict()
 
-# League comparison: scatter plot
+# League comparison: scatter plot with visible labels
 league_stats = (
     df.groupby("league")
     .agg(avg_goals=("total_goals", "mean"), num_matches=("id", "count"))
     .reset_index()
 )
-fig_league_scatter = px.scatter(
-    league_stats,
-    x="avg_goals",
-    y="num_matches",
-    hover_name="league",
+fig_league_scatter = go.Figure()
+league_stats["short_label"] = league_stats["league"].str.split(" ", n=1).str[1]
+fig_league_scatter.add_trace(go.Scatter(
+    x=league_stats["avg_goals"],
+    y=league_stats["num_matches"],
+    mode="markers+text",
+    text=league_stats["short_label"],
+    textposition="top center",
+    marker=dict(size=10, color="#7c3aed", line=dict(color="#e2e8f0", width=1)),
+    hovertemplate="<b>%{text}</b><br>Avg Goals: %{x:.2f}<br>Matches: %{y}<extra></extra>",
+))
+fig_league_scatter.update_layout(
     title="League Comparison: Goals vs Matches",
-    labels={"avg_goals": "Avg Goals", "num_matches": "Number of Matches"},
-    **px_kwargs,
+    xaxis=dict(title="Avg Goals"),
+    yaxis=dict(title="Number of Matches"),
+    template=template,
+    font=font_cfg,
 )
 apply_layout(fig_league_scatter)
 charts["league_comparison_scatter"] = fig_league_scatter.to_dict()
