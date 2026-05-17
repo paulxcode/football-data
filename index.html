@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>European Football Analysis (2008–2016)</title>
+<script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+<script src="data.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <span class="logo">⚽ Euro Football Analysis</span>
+  <div class="links">
+    <a href="#methodology">Methodology</a>
+    <a href="#goals">Goals</a>
+    <a href="#home-adv">Home Advantage</a>
+    <a href="#seasons">Trends</a>
+    <a href="#leagues">Leagues</a>
+    <a href="#players">Players</a>
+    <a href="#prediction">Prediction</a>
+  </div>
+</nav>
+
+<section class="hero" id="hero">
+  <h1>European Football Analysis</h1>
+  <p>An exploratory data analysis of <strong id="matchCount"></strong> matches across 11 European leagues (2008–2016)</p>
+  <div class="stats-grid" id="statsGrid"></div>
+</section>
+
+<section id="methodology">
+  <h2>Data &amp; Methodology</h2>
+  <p class="section-sub">How this analysis was conducted, from raw data to insights</p>
+  <div class="methodology-grid">
+    <div class="meth-card">
+      <h3>Data Source</h3>
+      <p><a class="source-link" href="https://huggingface.co/datasets/julien-c/kaggle-hugomathien-soccer" target="_blank">European Soccer Database</a> by Hugo Mathien, hosted on Hugging Face. Contains match results, player attributes, team info, and betting odds from 11 European leagues across 8 seasons.</p>
+    </div>
+    <div class="meth-card">
+      <h3>Tools &amp; Libraries</h3>
+      <ul>
+        <li>Python for data processing and modeling</li>
+        <li>Pandas and NumPy for data wrangling</li>
+        <li>SQLite for database queries</li>
+        <li>Scikit-learn for the Random Forest classifier</li>
+        <li>Plotly for interactive visualizations</li>
+      </ul>
+    </div>
+    <div class="meth-card">
+      <h3>Process</h3>
+      <ul>
+        <li>SQL extraction from relational database</li>
+        <li>Data cleaning &amp; feature engineering</li>
+        <li>Exploratory data analysis</li>
+        <li>Statistical summaries &amp; aggregation</li>
+        <li>Predictive modeling with betting odds</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="goals">
+  <h2>Goal Distribution</h2>
+  <p class="section-sub">Most matches are low-scoring, with 0–3 total goals being the norm across all leagues</p>
+  <div class="chart-grid">
+    <div class="chart-box"><div class="plot" id="goalDist"></div></div>
+  </div>
+  <div class="insight"><strong>Key insight:</strong> The most common scoreline is <strong id="commonScore"></strong>. Clean sheets are frequent, with most matches seeing 2–3 total goals. High-scoring games are rare, making the distribution right-skewed.</div>
+</section>
+
+<section id="home-adv">
+  <h2>Home Advantage</h2>
+  <p class="section-sub">Home teams win nearly half of all matches, a consistent pattern across every league</p>
+  <div class="chart-grid chart-grid-2">
+    <div class="chart-box"><div class="plot" id="haPie"></div></div>
+    <div class="chart-box"><div class="plot" id="haBar"></div></div>
+  </div>
+  <div class="insight"><strong>Key insight:</strong> Home teams win <strong id="homeWinPct"></strong> of matches vs away teams winning <strong id="awayWinPct"></strong>. The remaining <strong id="drawPct"></strong> end in draws, making home advantage one of the most robust patterns in football.</div>
+</section>
+
+<section id="seasons">
+  <h2>Season Trends</h2>
+  <p class="section-sub">Goal scoring and home advantage stayed remarkably stable from 2008 to 2016</p>
+  <div class="chart-grid chart-grid-2">
+    <div class="chart-box"><div class="plot" id="seasonGoals"></div></div>
+    <div class="chart-box"><div class="plot" id="seasonHomeAdv"></div></div>
+  </div>
+  <div class="insight"><strong>Key insight:</strong> Average goals per match fluctuated in a narrow band (2.5–2.8). Home win rate held consistently around 45–48% every season; these patterns are deeply structural, not cyclical.</div>
+</section>
+
+<section id="leagues">
+  <h2>League Comparison</h2>
+  <p class="section-sub">Not all leagues are created equal: the Eredivisie leads in goals, Ligue 1 in defense</p>
+  <div class="chart-grid chart-grid-2">
+    <div class="chart-box"><div class="plot" id="leagueBar"></div></div>
+    <div class="chart-box"><div class="plot" id="leagueScatter"></div></div>
+  </div>
+  <div class="insight"><strong>Key insight:</strong> <strong id="bestLeague"></strong> averages <strong id="bestLeagueGoals"></strong> goals per match, the most entertaining league in Europe. France's Ligue 1 is the most defensive at ~2.4 goals/match. The scatter plot shows leagues cluster by playing style.</div>
+</section>
+
+<section id="players">
+  <h2>Player Analysis</h2>
+  <p class="section-sub">Tracking <strong id="playerCount"></strong> players from goal contributions to career arcs across 8 seasons</p>
+  <div class="chart-grid">
+    <div class="chart-box"><div class="plot plot-tall" id="topPlayers"></div></div>
+    <div class="chart-box"><div class="plot plot-med" id="messiRonaldo"></div></div>
+  </div>
+  <div class="insight"><strong>Key insight:</strong> Messi and Ronaldo's production tracked across 8 seasons using actual match event data. Messi edges Ronaldo in total G+A (384 vs 355), but Ronaldo's peak season (2014–15: 63 G+A) narrowly beats Messi's best (2012–13: 60 G+A). Both maintained elite production for nearly a decade, a longevity unmatched in modern football.</div>
+</section>
+
+<section id="prediction">
+  <h2>Match Prediction Model</h2>
+  <p class="section-sub">A Random Forest classifier using betting odds to predict Home Win / Draw / Away Win</p>
+  <div class="chart-grid chart-grid-2">
+    <div class="chart-box"><div class="plot" id="cm"></div></div>
+    <div class="chart-box"><div class="plot" id="featImp"></div></div>
+  </div>
+  <div class="metrics-box">
+    <h3>Model Performance</h3>
+    <table class="metrics-table" id="metricsTable"></table>
+  </div>
+  <div class="insight"><strong>Key insight:</strong> Betting odds encode market knowledge remarkably well; the model achieves <strong id="modelAcc"></strong> accuracy. Draws are the hardest to predict (low recall), as they're the least common outcome and often have ambiguous odds.</div>
+</section>
+
+<section id="findings">
+  <h2>Key Findings</h2>
+  <p class="section-sub">Six major takeaways from the analysis</p>
+  <div class="findings-grid" id="findingsGrid"></div>
+</section>
+
+<footer>
+  Built with Python, Pandas, Scikit-learn &amp; Plotly &nbsp;·&nbsp; Data from <a href="https://huggingface.co/datasets/julien-c/kaggle-hugomathien-soccer" target="_blank">Kaggle / Hugging Face</a>
+</footer>
+
+<script>
+const DATA = window.SITE_DATA;
+const CHARTS = DATA.charts;
+
+function $(id) { return document.getElementById(id); }
+function chart(id, key) {
+  const fig = CHARTS[key];
+  Plotly.newPlot(id, fig.data, fig.layout, { responsive: true, displayModeBar: false });
+}
+
+$("matchCount").textContent = DATA.total_matches.toLocaleString();
+$("playerCount").textContent = DATA.total_players.toLocaleString();
+
+$("statsGrid").innerHTML = [
+  [DATA.total_matches.toLocaleString(), "Matches"],
+  [DATA.total_players.toLocaleString(), "Players"],
+  [DATA.total_teams.toLocaleString(), "Teams"],
+  [DATA.total_seasons, "Seasons"],
+].map(([num, label]) =>
+  `<div class="stat-card"><div class="num">${num}</div><div class="label">${label}</div></div>`
+).join("");
+
+chart("goalDist", "goal_distribution");
+chart("haPie", "home_advantage_pie");
+chart("haBar", "home_advantage_bar");
+chart("seasonGoals", "season_trend_goals");
+chart("seasonHomeAdv", "season_trend_home_adv");
+chart("leagueBar", "league_comparison_bar");
+chart("leagueScatter", "league_comparison_scatter");
+chart("topPlayers", "top_20_players");
+chart("messiRonaldo", "messi_ronaldo_comparison");
+chart("cm", "confusion_matrix_heatmap");
+chart("featImp", "feature_importance");
+
+$("commonScore").textContent = DATA.most_common_score;
+$("homeWinPct").textContent = DATA.home_win_pct + "%";
+$("awayWinPct").textContent = DATA.away_win_pct + "%";
+$("drawPct").textContent = DATA.draw_pct + "%";
+$("bestLeague").textContent = DATA.highest_scoring_league;
+$("bestLeagueGoals").textContent = DATA.highest_scoring_avg.toFixed(2);
+
+const report = CHARTS.classification_report;
+const accuracy = (report.accuracy * 100).toFixed(1);
+$("modelAcc").textContent = accuracy + "%";
+
+$("metricsTable").innerHTML = [
+  `<thead><tr><th>Class</th><th class="num">Precision</th><th class="num">Recall</th><th class="num">F1-Score</th><th class="num">Support</th></tr></thead>`,
+  `<tbody>${
+    [
+      { cls: "Home Win", dot: "#22c55e" },
+      { cls: "Draw", dot: "#eab308" },
+      { cls: "Away Win", dot: "#ef4444" },
+    ].map(({ cls, dot }) => {
+      const p = report[cls].precision;
+      const r = report[cls].recall;
+      const f = report[cls]["f1-score"];
+      const s = report[cls].support;
+      const maxSupport = Math.max(...["Home Win", "Draw", "Away Win"].map(c => report[c].support));
+      const bar = (v) => `${(v * 100).toFixed(0)}%`;
+      const scoreColor = (v) => v >= 0.85 ? "#22c55e" : v >= 0.7 ? "#eab308" : "#ef4444";
+      return `<tr>
+        <td><span class="class-label"><span class="class-dot" style="background:${dot};color:${dot}"></span>${cls}</span></td>
+        <td class="num"><span class="score-bar-wrap"><span class="score-bar"><span class="score-bar-fill" style="width:${bar(p)};background:${scoreColor(p)}"></span></span>${p.toFixed(3)}</span></td>
+        <td class="num"><span class="score-bar-wrap"><span class="score-bar"><span class="score-bar-fill" style="width:${bar(r)};background:${scoreColor(r)}"></span></span>${r.toFixed(3)}</span></td>
+        <td class="num"><span class="score-bar-wrap"><span class="score-bar"><span class="score-bar-fill" style="width:${bar(f)};background:${scoreColor(f)}"></span></span>${f.toFixed(3)}</span></td>
+        <td class="num"><span class="support-bar-wrap"><span class="support-bar"><span class="support-bar-fill" style="width:${(s/maxSupport*100).toFixed(0)}%"></span></span>${s.toFixed(0)}</span></td>
+      </tr>`;
+    }).join("")
+  }</tbody>`,
+  `<tr class="acc"><td>Accuracy</td><td colspan="4" class="num">${accuracy}%</td></tr>`,
+].join("");
+
+$("findingsGrid").innerHTML = [
+  { num: DATA.home_win_pct + "%", text: "Home advantage is significant, with home teams winning nearly half of all matches, a consistent pattern across all 11 leagues." },
+  { num: DATA.avg_goals.toFixed(1), text: "Average goals per match. Most matches have 0–3 total goals, making low-scoring tight affairs the norm." },
+  { num: DATA.highest_scoring_avg.toFixed(1), text: `Goals per match in the ${DATA.highest_scoring_league}, the most entertaining league. Nearly a goal more than Ligue 1.` },
+  { num: "200+", text: "Top players by goals and assists combined, parsed from XML event data across 14K matches. Messi and Ronaldo dominate the scoring charts." },
+  { num: accuracy + "%", text: "Model accuracy using betting odds alone; market prices encode match outcome probabilities remarkably well." },
+  { num: DATA.total_seasons, text: "Seasons of data with stable patterns; goal scoring and home advantage barely changed from 2008 to 2016." },
+].map(f =>
+  `<div class="finding-card"><div class="num">${f.num}</div><p>${f.text}</p></div>`
+).join("");
+</script>
+</body>
+</html>
