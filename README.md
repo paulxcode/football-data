@@ -1,6 +1,6 @@
-# European Football Analysis (2008-2016)
+# European Football Analysis (2008–2016)
 
-Exploratory data analysis of 25,979 matches across 11 European leagues, with interactive visualizations and a match prediction model. All data is precomputed and served as a static site.
+An interactive data exploration of **25,979 football matches** across 11 European leagues over 8 seasons. All charts and data are precomputed into a single file — no server, no database, no API calls. Just open the page and explore.
 
 **Live demo:** [.vercel.app]
 
@@ -10,7 +10,7 @@ Exploratory data analysis of 25,979 matches across 11 European leagues, with int
 
 ### Goal Distribution
 
-Most matches are low-scoring (0-3 total goals). The most common scoreline is 1-1.
+Most matches are low-scoring (0–3 total goals). The most common scoreline is 1–1.
 
 ![Goal Distribution](assets/screenshot-goal-distribution.png)
 
@@ -44,7 +44,7 @@ Top 20 players by goals and assists, parsed from XML event data across 14K match
 
 ### Match Prediction Model
 
-A Random Forest classifier using B365 betting odds achieves 55.2% accuracy. Home Win is easiest to predict (F1=0.68), Draw is hardest (F1=0.09).
+A Random Forest classifier using B365 betting odds achieves 55.2% accuracy. Home Win is easiest to predict (F1 = 0.68), Draw is hardest (F1 = 0.09).
 
 ![Match Prediction 1](assets/screenshot-prediction-1.png)
 ![Match Prediction 2](assets/screenshot-prediction-2.png)
@@ -52,101 +52,165 @@ A Random Forest classifier using B365 betting odds achieves 55.2% accuracy. Home
 
 ---
 
-## Project Structure
+## How It Works (Step by Step)
 
+This project has two parts:
+
+1. **A Python script** that reads a database and produces a data file
+2. **A web page** that reads that data file and displays charts
+
+### 1. The Database
+
+The raw data comes from the [European Soccer Database](https://huggingface.co/datasets/julien-c/kaggle-hugomathien-soccer) by Hugo Mathien. It is a single SQLite file (`.sqlite`) containing multiple tables:
+
+- **Match** — every match: teams, score, date, season, betting odds
+- **Player** — player names and IDs
+- **Team** — team names and IDs
+- **League** — league names
+- **Country** — country names
+
+SQLite is a file-based database — no server needed. Python can open it and run SQL queries directly.
+
+### 2. `export_data.py` — The Pipeline
+
+`export_data.py` is a Python script that:
+
+1. Connects to the SQLite database
+2. Runs SQL queries to extract match data
+3. Computes statistics (win percentages, averages, etc.)
+4. Generates interactive Plotly charts
+5. Trains a machine learning model
+6. Packages everything into a single JavaScript file called `data.js`
+
+Here is the main query it runs:
+
+```sql
+SELECT M.id, M.season, M.date,
+       C.name AS country, L.name AS league,
+       M.home_team_goal, M.away_team_goal,
+       M.B365H, M.B365D, M.B365A
+FROM Match M
+JOIN Country C ON M.country_id = C.id
+JOIN League L ON M.league_id = L.id
 ```
-football-analysis-site/
-  index.html         single page site (dark theme, Plotly charts)
-  style.css          all styling
-  data.js            precomputed data payload (198KB)
-  export_data.py     Python pipeline: SQLite to data.js
-  vercel.json        static site config for Vercel
-  README.md          this file
-```
 
----
+This joins four tables to get: who played, when, the score, and the pre-match betting odds.
 
-## How It Works
+### 3. How the Charts Are Made
 
-### Data Pipeline
+The script uses **Plotly**, a Python charting library. It creates each chart (histograms, pie charts, bar charts, scatter plots, tables) and converts every chart into a JSON object — a plain text description of the chart's data and layout.
 
-`export_data.py` connects to a 313MB SQLite database, runs queries, computes statistics, generates Plotly charts, trains a Random Forest model, and serializes everything into `data.js`.
-
-Key queries:
+These JSON chart objects get stored in a dictionary:
 
 ```python
-matches_query = '''
-    SELECT M.id, M.season, M.date, C.name AS country, L.name AS league,
-           M.home_team_goal, M.away_team_goal,
-           M.B365H, M.B365D, M.B365A
-    FROM Match M
-    JOIN Country C ON M.country_id = C.id
-    JOIN League L ON M.league_id = L.id
-'''
+charts["goal_distribution"] = fig_goal_dist.to_dict()
+charts["home_advantage_pie"] = fig_home_adv_pie.to_dict()
+# ... and so on for every chart
 ```
 
-### Goal and Assist Parsing
+### 4. The Machine Learning Model
 
-Goal events are stored as XML in the `Match.goal` column. The parser extracts scorers and assisters:
-
-```python
-root = ET.fromstring(f"<root>{row['goal']}</root>")
-for value in root.findall('.//value'):
-    scorer = value.find('player1')
-    assister = value.find('player2')
-```
-
-14,217 of 25,979 matches have goal event data. This feeds both the top 20 table and the Messi vs Ronaldo comparison.
-
-### Prediction Model
-
-A Random Forest classifier with 200 trees and max depth of 10, trained on B365 betting odds:
+The script trains a **Random Forest classifier** — an algorithm that makes predictions by combining many decision trees:
 
 ```python
 rf = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42)
 rf.fit(X, y)
 ```
 
-The model predicts three classes: Home Win, Draw, Away Win. Betting odds are the only features, so the 55.2% accuracy reflects how well market prices encode match outcomes.
+- **Input (features):** The three B365 betting odds (Home Win, Draw, Away Win)
+- **Output (target):** The actual match result
+- **Result:** 55.2% accuracy — betting odds encode match outcomes surprisingly well
 
-### Frontend
+The model outputs a confusion matrix (showing correct vs incorrect predictions) and a classification report (precision, recall, F1-score for each outcome).
 
-`index.html` loads `data.js` (which sets `window.SITE_DATA`) and renders charts via Plotly.js. No build step, no server, no database at runtime.
+### 5. `data.js` — The Bridge
+
+The script dumps every statistic, every chart, and every model result into a single JavaScript file:
+
+```python
+js_content = f"window.SITE_DATA = {json.dumps(data, cls=PlotlyJSONEncoder)};"
+```
+
+This creates a global variable `window.SITE_DATA` that contains everything the web page needs. The file is about 198 KB — big enough to hold all the data, small enough to load instantly.
+
+### 6. `index.html` — The Frontend
+
+The web page is a single HTML file. It does three things:
+
+1. Loads `data.js` (which sets `window.SITE_DATA`)
+2. Loads Plotly.js from CDN (a free library for rendering charts)
+3. Renders each chart by passing the precomputed JSON to Plotly
 
 ```javascript
 const DATA = window.SITE_DATA;
 const CHARTS = DATA.charts;
-function chart(id, key) {
-  const fig = CHARTS[key];
-  Plotly.newPlot(id, fig.data, fig.layout, { responsive: true, displayModeBar: false });
-}
+Plotly.newPlot("goalDist", CHARTS.goal_distribution.data, CHARTS.goal_distribution.layout);
+```
+
+No server, no database, no API. Everything runs in the browser.
+
+---
+
+## Project Structure
+
+```
+football-analysis-site/
+  index.html         The web page (dark theme, Plotly charts)
+  style.css          All colors, fonts, and layout
+  data.js            Precomputed data (statistics + charts + model)
+  export_data.py     Python script that generates data.js
+  assets/            Screenshots for this README
+  vercel.json        Configuration for deploying to Vercel
+  README.md          This file
 ```
 
 ---
 
-## Setup
+## Data Source
 
-### Prerequisites
+[European Soccer Database](https://huggingface.co/datasets/julien-c/kaggle-hugomathien-soccer) by Hugo Mathien, hosted on Hugging Face. Contains match results, player attributes, team info, and betting odds from 11 European leagues across 8 seasons (2008–2016).
 
-- Python 3.8+
-- [European Soccer Database](https://huggingface.co/datasets/julien-c/kaggle-hugomathien-soccer) SQLite file at `../footballData/database.sqlite`
+The leagues included:
 
-### Install and Run
+| Country | League |
+|---------|--------|
+| England | Premier League |
+| Spain | La Liga |
+| Germany | 1. Bundesliga |
+| Italy | Serie A |
+| France | Ligue 1 |
+| Netherlands | Eredivisie |
+| Portugal | Liga ZON Sagres |
+| Scotland | Premier League |
+| Belgium | Jupiler League |
+| Switzerland | Super League |
+| Poland | Ekstraklasa |
+
+---
+
+## How to Run Locally
+
+The site works immediately — just open `index.html` in any browser. No installation needed.
+
+### To Regenerate the Data (Optional)
+
+If you want to re-run the data pipeline (for example, after fixing a bug or adding a new chart):
+
+1. Download the database from the [link above](https://huggingface.co/datasets/julien-c/kaggle-hugomathien-soccer)
+2. Place the `.sqlite` file in this folder and name it `database.sqlite`
+3. Install Python dependencies:
 
 ```bash
-cd ../footballData
-python -m venv venv
-venv\Scripts\pip install pandas numpy plotly scikit-learn
+pip install pandas numpy plotly scikit-learn
 ```
 
-Generate the data payload:
+4. Run the pipeline:
 
 ```bash
-cd ../football-analysis-site
-../footballData/venv/Scripts/python export_data.py
+python export_data.py
 ```
 
-Open `index.html` in a browser (works directly from the filesystem).
+5. Refresh `index.html` in your browser
 
 ### Deploy to Vercel
 
@@ -154,17 +218,15 @@ Open `index.html` in a browser (works directly from the filesystem).
 npx vercel --prod
 ```
 
----
-
-## Data Source
-
-[European Soccer Database](https://huggingface.co/datasets/julien-c/kaggle-hugomathien-soccer) by Hugo Mathien, hosted on Hugging Face. Contains match results, player attributes, team info, and betting odds from 11 European leagues across 8 seasons.
+Vercel serves the folder as a static site. No build step required.
 
 ---
 
 ## Built With
 
-- Python, Pandas, NumPy for data processing
-- Scikit-learn for the Random Forest model
-- Plotly for interactive visualizations
-- Vanilla HTML, CSS, JavaScript for the frontend
+- **Python** — data processing and machine learning
+- **Pandas & NumPy** — data wrangling and statistics
+- **Scikit-learn** — Random Forest classifier
+- **Plotly** — interactive charts
+- **SQLite** — database engine
+- **Vanilla HTML, CSS, JavaScript** — frontend (no frameworks)

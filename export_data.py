@@ -12,7 +12,7 @@ from plotly.utils import PlotlyJSONEncoder
 
 warnings.filterwarnings("ignore")
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "..", "footballData", "database.sqlite")
+DB_PATH = os.path.join(os.path.dirname(__file__), "database.sqlite")
 DATA_JS_PATH = os.path.join(os.path.dirname(__file__), "data.js")
 
 conn = sqlite3.connect(DB_PATH)
