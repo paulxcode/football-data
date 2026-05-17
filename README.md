@@ -2,7 +2,7 @@
 
 An interactive data exploration of **25,979 football matches** across 11 European leagues over 8 seasons. All charts and data are precomputed into a single file — no server, no database, no API calls. Just open the page and explore.
 
-**Live demo:** [.vercel.app]
+**Live demo:** [[.vercel.app](https://football-data-mu.vercel.app/)]
 
 ---
 
