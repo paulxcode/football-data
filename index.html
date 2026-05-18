@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <title>European Football Analysis (2008–2016)</title>
 <script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
 <script src="data.js"></script>
@@ -10,34 +11,23 @@
 </head>
 <body>
 
-<nav>
-  <span class="logo">⚽ Euro Football Analysis</span>
-  <div class="links">
-    <a href="#methodology">Methodology</a>
-    <a href="#goals">Goals</a>
-    <a href="#home-adv">Home Advantage</a>
-    <a href="#seasons">Trends</a>
-    <a href="#leagues">Leagues</a>
-    <a href="#players">Players</a>
-    <a href="#prediction">Prediction</a>
-  </div>
-</nav>
+
 
 <section class="hero" id="hero">
   <h1>European Football Analysis</h1>
   <p>An exploratory data analysis of <strong id="matchCount"></strong> matches across 11 European leagues (2008–2016)</p>
-  <div class="stats-grid" id="statsGrid"></div>
+  <div class="stats-row" id="statsGrid"></div>
 </section>
 
 <section id="methodology">
   <h2>Data &amp; Methodology</h2>
   <p class="section-sub">How this analysis was conducted, from raw data to insights</p>
   <div class="methodology-grid">
-    <div class="meth-card">
+    <div class="meth-item">
       <h3>Data Source</h3>
       <p><a class="source-link" href="https://huggingface.co/datasets/julien-c/kaggle-hugomathien-soccer" target="_blank">European Soccer Database</a> by Hugo Mathien, hosted on Hugging Face. Contains match results, player attributes, team info, and betting odds from 11 European leagues across 8 seasons.</p>
     </div>
-    <div class="meth-card">
+    <div class="meth-item">
       <h3>Tools &amp; Libraries</h3>
       <ul>
         <li>Python for data processing and modeling</li>
@@ -47,7 +37,7 @@
         <li>Plotly for interactive visualizations</li>
       </ul>
     </div>
-    <div class="meth-card">
+    <div class="meth-item">
       <h3>Process</h3>
       <ul>
         <li>SQL extraction from relational database</li>
@@ -64,7 +54,7 @@
   <h2>Goal Distribution</h2>
   <p class="section-sub">Most matches are low-scoring, with 0–3 total goals being the norm across all leagues</p>
   <div class="chart-grid">
-    <div class="chart-box"><div class="plot" id="goalDist"></div></div>
+    <div class="plot" id="goalDist"></div>
   </div>
   <div class="insight"><strong>Key insight:</strong> The most common scoreline is <strong id="commonScore"></strong>. Clean sheets are frequent, with most matches seeing 2–3 total goals. High-scoring games are rare, making the distribution right-skewed.</div>
 </section>
@@ -73,8 +63,8 @@
   <h2>Home Advantage</h2>
   <p class="section-sub">Home teams win nearly half of all matches, a consistent pattern across every league</p>
   <div class="chart-grid chart-grid-2">
-    <div class="chart-box"><div class="plot" id="haPie"></div></div>
-    <div class="chart-box"><div class="plot" id="haBar"></div></div>
+    <div class="plot" id="haPie"></div>
+    <div class="plot" id="haBar"></div>
   </div>
   <div class="insight"><strong>Key insight:</strong> Home teams win <strong id="homeWinPct"></strong> of matches vs away teams winning <strong id="awayWinPct"></strong>. The remaining <strong id="drawPct"></strong> end in draws, making home advantage one of the most robust patterns in football.</div>
 </section>
@@ -83,8 +73,8 @@
   <h2>Season Trends</h2>
   <p class="section-sub">Goal scoring and home advantage stayed remarkably stable from 2008 to 2016</p>
   <div class="chart-grid chart-grid-2">
-    <div class="chart-box"><div class="plot" id="seasonGoals"></div></div>
-    <div class="chart-box"><div class="plot" id="seasonHomeAdv"></div></div>
+    <div class="plot" id="seasonGoals"></div>
+    <div class="plot" id="seasonHomeAdv"></div>
   </div>
   <div class="insight"><strong>Key insight:</strong> Average goals per match fluctuated in a narrow band (2.5–2.8). Home win rate held consistently around 45–48% every season; these patterns are deeply structural, not cyclical.</div>
 </section>
@@ -93,8 +83,8 @@
   <h2>League Comparison</h2>
   <p class="section-sub">Not all leagues are created equal: the Eredivisie leads in goals, Ligue 1 in defense</p>
   <div class="chart-grid chart-grid-2">
-    <div class="chart-box"><div class="plot" id="leagueBar"></div></div>
-    <div class="chart-box"><div class="plot" id="leagueScatter"></div></div>
+    <div class="plot" id="leagueBar"></div>
+    <div class="plot" id="leagueScatter"></div>
   </div>
   <div class="insight"><strong>Key insight:</strong> <strong id="bestLeague"></strong> averages <strong id="bestLeagueGoals"></strong> goals per match, the most entertaining league in Europe. France's Ligue 1 is the most defensive at ~2.4 goals/match. The scatter plot shows leagues cluster by playing style.</div>
 </section>
@@ -103,8 +93,8 @@
   <h2>Player Analysis</h2>
   <p class="section-sub">Tracking <strong id="playerCount"></strong> players from goal contributions to career arcs across 8 seasons</p>
   <div class="chart-grid">
-    <div class="chart-box"><div class="plot plot-tall" id="topPlayers"></div></div>
-    <div class="chart-box"><div class="plot plot-med" id="messiRonaldo"></div></div>
+    <div class="plot plot-tall" id="topPlayers"></div>
+    <div class="plot plot-med" id="messiRonaldo"></div>
   </div>
   <div class="insight"><strong>Key insight:</strong> Messi and Ronaldo's production tracked across 8 seasons using actual match event data. Messi edges Ronaldo in total G+A (384 vs 355), but Ronaldo's peak season (2014–15: 63 G+A) narrowly beats Messi's best (2012–13: 60 G+A). Both maintained elite production for nearly a decade, a longevity unmatched in modern football.</div>
 </section>
@@ -113,8 +103,8 @@
   <h2>Match Prediction Model</h2>
   <p class="section-sub">A Random Forest classifier using betting odds to predict Home Win / Draw / Away Win</p>
   <div class="chart-grid chart-grid-2">
-    <div class="chart-box"><div class="plot" id="cm"></div></div>
-    <div class="chart-box"><div class="plot" id="featImp"></div></div>
+    <div class="plot" id="cm"></div>
+    <div class="plot" id="featImp"></div>
   </div>
   <div class="metrics-box">
     <h3>Model Performance</h3>
@@ -126,7 +116,7 @@
 <section id="findings">
   <h2>Key Findings</h2>
   <p class="section-sub">Six major takeaways from the analysis</p>
-  <div class="findings-grid" id="findingsGrid"></div>
+  <div class="findings-list" id="findingsGrid"></div>
 </section>
 
 <footer>
@@ -140,7 +130,24 @@ const CHARTS = DATA.charts;
 function $(id) { return document.getElementById(id); }
 function chart(id, key) {
   const fig = CHARTS[key];
-  Plotly.newPlot(id, fig.data, fig.layout, { responsive: true, displayModeBar: false });
+  const layout = Object.assign({}, fig.layout, {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    font: Object.assign({}, fig.layout.font, {
+      family: 'Inter, system-ui, sans-serif',
+      color: '#94a3b8',
+      size: 11
+    }),
+    xaxis: Object.assign({}, fig.layout.xaxis, {
+      gridcolor: '#2a2b2e',
+      zerolinecolor: '#2a2b2e'
+    }),
+    yaxis: Object.assign({}, fig.layout.yaxis, {
+      gridcolor: '#2a2b2e',
+      zerolinecolor: '#2a2b2e'
+    })
+  });
+  Plotly.newPlot(id, fig.data, layout, { responsive: true, displayModeBar: false });
 }
 
 $("matchCount").textContent = DATA.total_matches.toLocaleString();
@@ -152,7 +159,7 @@ $("statsGrid").innerHTML = [
   [DATA.total_teams.toLocaleString(), "Teams"],
   [DATA.total_seasons, "Seasons"],
 ].map(([num, label]) =>
-  `<div class="stat-card"><div class="num">${num}</div><div class="label">${label}</div></div>`
+  `<div class="stat-item"><div class="num">${num}</div><div class="label">${label}</div></div>`
 ).join("");
 
 chart("goalDist", "goal_distribution");
@@ -213,7 +220,7 @@ $("findingsGrid").innerHTML = [
   { num: accuracy + "%", text: "Model accuracy using betting odds alone; market prices encode match outcome probabilities remarkably well." },
   { num: DATA.total_seasons, text: "Seasons of data with stable patterns; goal scoring and home advantage barely changed from 2008 to 2016." },
 ].map(f =>
-  `<div class="finding-card"><div class="num">${f.num}</div><p>${f.text}</p></div>`
+  `<div class="finding-item"><div class="num">${f.num}</div><p>${f.text}</p></div>`
 ).join("");
 </script>
 </body>
